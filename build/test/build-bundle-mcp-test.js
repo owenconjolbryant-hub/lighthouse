@@ -49,8 +49,9 @@ describe('MCP Bundle build', () => {
   });
 
   describe('licensing', () => {
-    it('contains licenses for axe-core, js-library-detector, and lighthouse-logger', () => {
-      const noticesPath = path.join(LH_ROOT, 'dist/LIGHTHOUSE_MCP_BUNDLE_THIRD_PARTY_NOTICES');
+    const noticesPath = path.join(LH_ROOT, 'dist/LIGHTHOUSE_MCP_BUNDLE_THIRD_PARTY_NOTICES');
+
+    it('contains licenses for specific key dependencies', () => {
       if (!fs.existsSync(noticesPath)) {
         console.warn('Skipping licensing test as notices file is missing');
         return;
@@ -64,6 +65,20 @@ describe('MCP Bundle build', () => {
       expect(content).toContain('License: MIT');
       expect(content).toContain('Name: lighthouse-logger');
       expect(content).toContain('License: Apache-2.0');
+      expect(content).toContain('Name: tldts-core');
+      expect(content).toContain('Name: @paulirish/trace_engine');
+    });
+
+    it('contains licenses for ALL packages found in the bundle sourcemap', () => {
+      const map = JSON.parse(fs.readFileSync(bundlePath + '.map', 'utf8'));
+      const notices = fs.readFileSync(noticesPath, 'utf8');
+
+      const pkgNames = new Set(map.sources
+        .map(s => s.match(/node_modules\/((?:@[^/]+\/)?[^/]+)/)?.[1])
+        .filter(name => name && name !== 'lighthouse'));
+
+      for (const name of pkgNames) expect(notices).toContain(`Name: ${name}`);
+      expect(pkgNames.size).toBeGreaterThanOrEqual(15);
     });
   });
 
