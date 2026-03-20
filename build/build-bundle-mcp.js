@@ -340,12 +340,19 @@ function generateThirdPartyNotices(metafile) {
     }
     nodeModules.set(nodeModule, nodeModulePath);
   }
+
+  // Manually add dependencies that esbuild metafile misses because they are inlined or aliased.
+  const manualModules = ['axe-core', 'js-library-detector', 'lighthouse-logger'];
+  for (const name of manualModules) {
+    nodeModules.set(name, `node_modules/${name}`);
+  }
+
   const divider =
-              '\n\n-------------------- DEPENDENCY DIVIDER --------------------\n\n';
+               '\n\n-------------------- DEPENDENCY DIVIDER --------------------\n\n';
 
   const stringifiedDependencies = Array.from(
     nodeModules.keys()
-  ).map(name => {
+  ).sort().map(name => {
     const nodeModulePath = nodeModules.get(name);
     const dependency = JSON.parse(
       fs.readFileSync(path.join(nodeModulePath, 'package.json'), 'utf-8'));
@@ -363,7 +370,7 @@ function generateThirdPartyNotices(metafile) {
     const parts = [];
     parts.push(`Name: ${dependency.name ?? 'N/A'}`);
     let url = dependency.homepage ?? dependency.repository;
-    if (url) {
+    if (url && typeof url === 'object') {
       url = url.url;
     }
     parts.push(`URL: ${url ?? 'N/A'}`);

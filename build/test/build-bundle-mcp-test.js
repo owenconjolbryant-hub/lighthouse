@@ -48,6 +48,25 @@ describe('MCP Bundle build', () => {
     expect(typeof mcpBundle.generateReport).toBe('function');
   });
 
+  describe('licensing', () => {
+    it('contains licenses for axe-core, js-library-detector, and lighthouse-logger', () => {
+      const noticesPath = path.join(LH_ROOT, 'dist/LIGHTHOUSE_MCP_BUNDLE_THIRD_PARTY_NOTICES');
+      if (!fs.existsSync(noticesPath)) {
+        console.warn('Skipping licensing test as notices file is missing');
+        return;
+      }
+
+      const content = fs.readFileSync(noticesPath, 'utf-8');
+      expect(content).toContain('Name: axe-core');
+      expect(content).toContain('URL: https://www.deque.com/axe/');
+      expect(content).toContain('License: MPL-2.0');
+      expect(content).toContain('Name: js-library-detector');
+      expect(content).toContain('License: MIT');
+      expect(content).toContain('Name: lighthouse-logger');
+      expect(content).toContain('License: Apache-2.0');
+    });
+  });
+
   describe('snapshot', () => {
     it('successfully runs snapshot on a local page', async () => {
       const {snapshot} = await import(bundlePath);
