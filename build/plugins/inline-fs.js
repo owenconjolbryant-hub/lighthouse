@@ -210,7 +210,7 @@ async function getReadFilePath(node, filepath) {
  * Returns the already-quoted contents of the file to be loaded.
  * If it's a JS file, it's minified before inlining.
  * @param {string} constructedPath
- * @param {SimpleCallExpression} node ESTree node for `fs.readFileSync` call.
+ * @param {SimpleCallExpression} _ ESTree node for `fs.readFileSync` call.
  * @return {Promise<string>}
  */
 async function getReadFileReplacement(constructedPath, _) {
@@ -252,7 +252,7 @@ async function getReaddirPath(node, filepath) {
 /**
  * Returns a JSON.stringified array with the contents of the target directory.
  * @param {string} constructedPath
- * @param {SimpleCallExpression} node ESTree node for `fs.readdirSync` call.
+ * @param {SimpleCallExpression} _ ESTree node for `fs.readdirSync` call.
  * @return {Promise<string>}
  */
 async function getReaddirReplacement(constructedPath, _) {

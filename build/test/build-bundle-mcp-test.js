@@ -74,8 +74,8 @@ describe('MCP Bundle build', () => {
       const notices = fs.readFileSync(noticesPath, 'utf8');
 
       const pkgNames = new Set(map.sources
-        .map(s => s.match(/node_modules\/((?:@[^/]+\/)?[^/]+)/)?.[1])
-        .filter(name => name && name !== 'lighthouse'));
+        .map((/** @type {string} */ s) => s.match(/node_modules\/((?:@[^/]+\/)?[^/]+)/)?.[1])
+        .filter((/** @type {string|undefined} */ name) => name && name !== 'lighthouse'));
 
       for (const name of pkgNames) expect(notices).toContain(`Name: ${name}`);
       expect(pkgNames.size).toBeGreaterThanOrEqual(15);
