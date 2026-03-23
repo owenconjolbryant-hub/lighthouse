@@ -164,6 +164,18 @@ export class DetailsRenderer {
   }
 
   /**
+   * @param {LH.Audit.Details.BaselineStatusValue} details
+   * @return {HTMLDivElement}
+   */
+  _renderBaselineStatus(details) {
+    const element = this._dom.createElement('div', 'lh-baseline-status');
+    const classSuffix = details.status;
+    element.classList.add(`lh-baseline-status--${classSuffix}`);
+    element.textContent = String(details.displayString);
+    return element;
+  }
+
+  /**
    * @param {{value: number, granularity?: number}} details
    * @return {Element}
    */
@@ -242,6 +254,10 @@ export class DetailsRenderer {
         case 'url': {
           return this.renderTextURL(value.value);
         }
+        case 'baseline-status': {
+          return this._renderBaselineStatus(
+            /** @type {LH.Audit.Details.BaselineStatusValue} */ (value));
+        }
         default: {
           return this._renderUnknown(value.type, value);
         }
@@ -290,6 +306,10 @@ export class DetailsRenderer {
           // Fall back to <pre> rendering if not actually a URL.
           return this._renderCode(strValue);
         }
+      }
+      case 'baseline-status': {
+        return this._renderBaselineStatus(
+          /** @type {LH.Audit.Details.BaselineStatusValue} */ (/** @type {unknown} */ (value)));
       }
       default: {
         return this._renderUnknown(heading.valueType, value);
